@@ -9,10 +9,16 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
- * @ApiResource()
+ * @ApiResource(
+ *      normalizationContext={"groups"={"customers_read"}},
+ *     subresourceOperations={
+ *           "invoices_get_subresource"={"path"="/customers/{id}/invoices"},
+ *     },
+ * )
  * @ApiFilter(
  *     SearchFilter::class, properties={
  *          "id": "exact",
@@ -29,37 +35,44 @@ class Customer
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"customers_read", "invoices_read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read", "invoices_read"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read", "invoices_read"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customers_read", "invoices_read"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"customers_read", "invoices_read"})
      */
     private $company;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice", mappedBy="customer")
+     * @Groups({"customers_read"})
      */
     private $invoices;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="customers")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"customers_read"})
      */
     private $user;
 
@@ -162,5 +175,28 @@ class Customer
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @Groups({"customers_read"})
+     * @return float
+     */
+    public function getTotalAmount(): float
+    {
+        return array_reduce($this->invoices->toArray(),  static function ($total, $invoice){
+            return $total + $invoice->getAmount();
+        }, 0);
+    }
+
+    /**
+     * @Groups({"customers_read"})
+     * @return float
+     */
+    public function getUnpaidAmount(): float
+    {
+        return array_reduce($this->invoices->toArray(),  static function ($total, $invoice){
+            return $total + ($invoice->getStatus() === "PAID" || $invoice->getStatus() === "CANCELLED" ? 0 :
+                    $invoice->getAmount());
+        }, 0);
     }
 }
