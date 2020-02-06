@@ -5,3 +5,32 @@ api_platform:
         json: ['application/merge-patch+json']
     swagger:
         versions: [3]
+    collection:
+        # The name of the query parameter to filter nullable results (with the ExistsFilter).
+        exists_parameter_name: 'exists'
+
+        # The default order of results.
+        order: 'ASC'
+
+        # The name of the query parameter to order results (with the OrderFilter).
+        order_parameter_name: 'order'
+
+        pagination:
+            # To enable or disable pagination for all resource collections by default.
+            enabled: false
+
+            # To allow the client to enable or disable the pagination.
+            client_enabled: true
+
+            # To allow the client to set the number of items per page.
+            client_items_per_page: true
+
+            # The default number of items per page.
+            items_per_page: 5
+
+            # The default name of the parameter handling the page number.
+            page_parameter_name: 'page'
+
+            # The name of the query parameter to set the number of items per page.
+            items_per_page_parameter_name: 'itemsPerPage'
+
