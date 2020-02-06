@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -15,6 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          "order"={"sentAt": "DESC"},
  *          },
  *      normalizationContext={"groups"={"invoices_read"}},
+ *      denormalizationContext={"disable_type_enforcement"=true},
  *      subresourceOperations={
  *           "api_customers_invoices_get_subresource"={
  *                    "normalization_context"={"groups"={"invoices_subresource"}}
@@ -41,8 +43,32 @@ class Invoice
     /**
      * @ORM\Column(type="float")
      * @Groups({"invoices_read", "customers_read", "invoices_subresource"})
+     * @Assert\NotBlank(message="This field is required")
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="The value {{ value }} is not a valid {{ type }}."
+     * )
      */
     private $amount;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"invoices_read", "customers_read", "invoices_subresource"})
+     * @Assert\NotBlank(message="This field is required")
+     * @Assert\Choice({"SENT", "PAID", "CANCELLED"}, message="The value of this field must be SENT, PAID or CANCELLED")
+     */
+    private $status;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Groups({"invoices_read", "customers_read", "invoices_subresource"})
+     * @Assert\NotBlank(message="This field is required")
+     * @Assert\Type(
+     *     type="integer",
+     *     message="The value {{ value }} is not a valid {{ type }}."
+     * )
+     */
+    private $invoiceNumber= 1;
 
     /**
      * @ORM\Column(type="datetime")
@@ -51,23 +77,17 @@ class Invoice
     private $sentAt;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"invoices_read", "customers_read", "invoices_subresource"})
-     */
-    private $status;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @Groups({"invoices_read", "customers_read", "invoices_subresource"})
-     */
-    private $invoiceNumber;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Customer", inversedBy="invoices")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"invoices_read"})
+     * @Assert\NotBlank(message="This field is required")
      */
     private $customer;
+
+    public function __construct()
+    {
+        $this->sentAt = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -79,7 +99,7 @@ class Invoice
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount($amount): self
     {
         $this->amount = $amount;
 
@@ -127,7 +147,7 @@ class Invoice
         return $this->invoiceNumber;
     }
 
-    public function setInvoiceNumber(int $invoiceNumber): self
+    public function setInvoiceNumber($invoiceNumber): self
     {
         $this->invoiceNumber = $invoiceNumber;
 

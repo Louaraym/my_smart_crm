@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,6 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ApiResource(
  *     normalizationContext={"groups"={"users_read"}},
+ * )
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="This email is already in use on that website."
  * )
  */
 class User implements UserInterface
@@ -29,6 +34,10 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource", "users_read"})
+     * @Assert\NotBlank(message="This field is required")
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email."
+     * )
      */
     private $email;
 
@@ -40,6 +49,7 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @Assert\NotBlank(message="This field is required")
      */
     private $password;
 
@@ -51,12 +61,26 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource", "users_read"})
+     * @Assert\NotBlank(message="This field is required")
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your first name must be at least {{ limit }} characters long",
+     *      maxMessage = "Your first name cannot be longer than {{ limit }} characters"
+     * )
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customers_read", "invoices_read", "invoices_subresource", "users_read"})
+     * @Assert\NotBlank(message="This field is required")
+     * @Assert\Length(
+     *      min = 2,
+     *      max = 255,
+     *      minMessage = "Your last name must be at least {{ limit }} characters long",
+     *      maxMessage = "Your last name cannot be longer than {{ limit }} characters"
+     * )
      */
     private $lastName;
 
