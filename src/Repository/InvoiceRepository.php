@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Invoice;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\NoResultException;
 
 /**
  * @method Invoice|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,22 @@ class InvoiceRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Invoice::class);
+    }
+
+    public function setNextInvoiceNumber(User $user){
+        try {
+            return $this->createQueryBuilder('i')
+                    ->select('i.invoiceNumber')
+                    ->join('i.customer', 'c')
+                    ->andWhere('c.user = :user')
+                    ->setParameter('user', $user)
+                    ->orderBy('i.invoiceNumber', 'DESC')
+                    ->setMaxResults(1)
+                    ->getQuery()
+                    ->getSingleScalarResult() + 1;
+        } catch (NoResultException $e) {
+            return 1;
+        }
     }
 
     // /**

@@ -68,7 +68,7 @@ class Invoice
      *     message="The value {{ value }} is not a valid {{ type }}."
      * )
      */
-    private $invoiceNumber= 1;
+    private $invoiceNumber;
 
     /**
      * @ORM\Column(type="datetime")
