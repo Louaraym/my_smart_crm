@@ -1,4 +1,8 @@
-
 import '../css/app.css';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from "./components/App";
 
-console.log('Hello Webpack Encore! Edit me in assets/js/app.js');
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App/>, rootElement);
