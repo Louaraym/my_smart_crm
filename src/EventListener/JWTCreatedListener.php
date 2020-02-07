@@ -3,7 +3,6 @@
 
 namespace App\EventListener;
 
-
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 
 class JWTCreatedListener
