@@ -4,14 +4,14 @@ import AuthContext from "../contexts/AuthContext";
 import Field from "../components/forms/Field";
 import {toast} from "react-toastify";
 
-const LoginPage = ({ history}) => {
+const LoginPage = ({history}) => {
 
     const [error, setError] = useState("");
     const {setIsAuthenticated} = useContext(AuthContext);
 
     const [credentials, setCredentials] = useState({
-        username: "sebastien24@live.com",
-        password: "password"
+        username: "",
+        password: ""
     });
 
     const handleChange = ({currentTarget}) => {
