@@ -1,17 +1,31 @@
-import React from 'react';
+import React, {useContext} from 'react';
+import {Link, NavLink} from "react-router-dom";
+import AuthContext from "../contexts/AuthContext";
 
 const HomePage = () => {
+    const {isAuthenticated} = useContext(AuthContext);
+
     return (
-        <div className="jumbotron">
-            <h1 className="display-3">Hello, world!</h1>
-            <p className="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra
-                attention to featured content or information.</p>
+        <div className="jumbotron  text-center">
+            <h1 className="display-3">Bienvenue dans votre CRM</h1>
+            { (!isAuthenticated && (
+                <>
+            <p className="lead">Vous dévez créer un compte pour pouvoir découvrir toutes les fonctionnalités offertes parr ce CRM fictif.</p>
             <hr className="my-4"/>
-                <p>It uses utility classes for typography and spacing to space content out within the larger
-                    container.</p>
                 <p className="lead">
-                    <a className="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+                    <NavLink className="btn btn-success btn-lg mr-2" to="/login">Connexion</NavLink>
+                    <NavLink className="btn btn-primary btn-lg mr-2" to="/register">Inscription</NavLink>
                 </p>
+                </>
+            )) || (
+                <>
+                <hr className="my-4"/>
+                    <p className="lead">Ce CRM vous permet d'ajouter, modifier et supprimer des clients et aussi d'ajouter, modifier et supprime des factures pour chaque client</p>
+                <p className="lead">
+                    <Link to="/customers" className="btn btn-primary" >Gérer mes clients</Link>
+                </p>
+                </>
+            )}
         </div>
     )
 };
