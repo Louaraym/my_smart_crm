@@ -10,7 +10,7 @@ const HomePage = () => {
             <h1 className="display-3">Bienvenue dans votre CRM</h1>
             { (!isAuthenticated && (
                 <>
-            <p className="lead">Vous dévez créer un compte pour pouvoir découvrir toutes les fonctionnalités offertes parr ce CRM fictif.</p>
+            <p className="lead">Vous dévez créer un compte pour pouvoir découvrir toutes les fonctionnalités offertes par ce CRM fictif.</p>
             <hr className="my-4"/>
                 <p className="lead">
                     <NavLink className="btn btn-success btn-lg mr-2" to="/login">Connexion</NavLink>
